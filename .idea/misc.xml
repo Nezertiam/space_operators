@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/drawable/menu_name_gradient_background.xml" value="0.341" />
         <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/layout/fragment_username_dialog.xml" value="0.35688405797101447" />
       </map>
     </option>
   </component>
