@@ -1,8 +1,10 @@
 package com.cci.spaceoperators
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.cci.spaceoperators.databinding.ActivityMainBinding
 import com.cci.spaceoperators.users.UsernameDialogFragment
@@ -23,23 +25,27 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        val prefs = getSharedPreferences("user", Context.MODE_PRIVATE)
+
 
 
 
         // ------------------ USERNAME SETTINGS -------------------------
 
+        val savedUsername = prefs.getString("username", null)
+
         usernameViewModel.currentUser.observe(this) { username ->
             binding.menuPlayerName.text = username
         }
 
+
         binding.menuPlayerName.setOnClickListener { openUsernameDialog() }
 
-        val username = getPreferences(Context.MODE_PRIVATE).getString("username", null)
-
-        if (username == null) {
-            openUsernameDialog()
+        if (savedUsername != null) {
+            usernameViewModel.changeUsername(savedUsername)
         } else {
-            usernameViewModel.changeUsername(username)
+            val currentUserName = usernameViewModel.currentUser.value
+            prefs.edit().putString("username", currentUserName).commit()
         }
 
         // --------------------------------------------------------------
@@ -48,12 +54,25 @@ class MainActivity : AppCompatActivity() {
 
         // ----------------- BUTTONS SETTINGS ---------------------------
 
-        // Quit app button
+        // Create game button
+        binding.menuCreateGameButton.setOnClickListener { goToCreateGame() }
 
+        // Join game button
+        // TODO("Not yet implemented")
+
+        // History button
+        // TODO("Not yet implemented")
+
+        // Quit app button
         binding.menuQuitApp.setOnClickListener { closeApp() }
 
         // --------------------------------------------------------------
 
+    }
+
+    private fun goToCreateGame() {
+        val intent = Intent(this, CreateGameActivity::class.java)
+        startActivity(intent)
     }
 
     private fun closeApp() {

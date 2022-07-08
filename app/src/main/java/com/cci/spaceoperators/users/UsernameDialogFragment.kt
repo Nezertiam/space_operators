@@ -3,7 +3,6 @@ package com.cci.spaceoperators.users
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
@@ -30,15 +29,14 @@ class UsernameDialogFragment : DialogFragment() {
             builder
                 .setMessage("Modifier pseudo")
                 .setView(binding.root)
-                .setPositiveButton("Valider") { dialog, _ -> changeUsername(dialog)}
-                .setNegativeButton("Annuler") { dialog, _ -> dialog.cancel()}
+                .setPositiveButton("Valider") { _, _ -> changeUsername() }
+                .setNegativeButton("Annuler") { dialog, _ -> dialog.dismiss() }
                 .create()
-
 
         return dialog
     }
 
-    private fun changeUsername(dialog: DialogInterface) {
+    private fun changeUsername() {
 
         val hasSucceed = usernameViewModel.changeUsername(
             binding.usernameInput.text.toString()
@@ -50,10 +48,8 @@ class UsernameDialogFragment : DialogFragment() {
             prefs.edit()
                 .putString("username", binding.usernameInput.text.toString())
                 .apply()
-
-            dialog.dismiss()
         } else {
-            Toast.makeText(activity, "Le pseudo doit être compris entre 3 et 15 caractères", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, "Le pseudo doit être compris entre 3 et 12 caractères", Toast.LENGTH_LONG).show()
         }
     }
 

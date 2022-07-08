@@ -9,6 +9,9 @@
         <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/drawable/menu_divider.xml" value="0.341" />
         <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/drawable/menu_empyt_divider.xml" value="0.341" />
         <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/drawable/menu_name_gradient_background.xml" value="0.341" />
+        <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/drawable/text_transparent_gradient_left.xml" value="0.196" />
+        <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/drawable/text_transparent_gradient_right.xml" value="0.341" />
+        <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/layout/activity_create_game.xml" value="0.35688405797101447" />
         <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/www/CCI/AndroidStudio/SpaceOperators/app/src/main/res/layout/fragment_username_dialog.xml" value="0.35688405797101447" />
       </map>

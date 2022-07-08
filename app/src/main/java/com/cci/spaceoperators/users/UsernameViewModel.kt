@@ -9,10 +9,10 @@ class UsernameViewModel(application: Application): AndroidViewModel(application)
 
     private val identifier = UUID.randomUUID().toString().split("-")[0]
 
-    var currentUser = MutableLiveData<String>("Player $identifier")
+    var currentUser = MutableLiveData<String>("$identifier")
 
     fun changeUsername(username: String): Boolean {
-        return if (username.length in 4..14) {
+        return if (username.length in 4..12) {
             currentUser.postValue(username)
             true
         } else {
