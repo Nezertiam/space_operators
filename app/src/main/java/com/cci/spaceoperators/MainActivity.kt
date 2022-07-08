@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import com.cci.spaceoperators.databinding.ActivityMainBinding
 import com.cci.spaceoperators.users.UsernameDialogFragment
 import com.cci.spaceoperators.users.UsernameViewModel
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,13 +23,16 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+
+
+
+        // ------------------ USERNAME SETTINGS -------------------------
+
         usernameViewModel.currentUser.observe(this) { username ->
             binding.menuPlayerName.text = username
         }
 
-        binding.menuPlayerName.setOnClickListener {
-            openUsernameDialog()
-        }
+        binding.menuPlayerName.setOnClickListener { openUsernameDialog() }
 
         val username = getPreferences(Context.MODE_PRIVATE).getString("username", null)
 
@@ -38,6 +42,23 @@ class MainActivity : AppCompatActivity() {
             usernameViewModel.changeUsername(username)
         }
 
+        // --------------------------------------------------------------
+
+
+
+        // ----------------- BUTTONS SETTINGS ---------------------------
+
+        // Quit app button
+
+        binding.menuQuitApp.setOnClickListener { closeApp() }
+
+        // --------------------------------------------------------------
+
+    }
+
+    private fun closeApp() {
+        moveTaskToBack(true)
+        exitProcess(-1)
     }
 
     private fun openUsernameDialog() {
