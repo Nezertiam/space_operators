@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.cci.spaceoperators.databinding.ActivityMainBinding
+import com.cci.spaceoperators.sockets.SocketViewModel
 import com.cci.spaceoperators.users.UsernameDialogFragment
 import com.cci.spaceoperators.users.UsernameViewModel
 import kotlin.system.exitProcess
@@ -28,8 +30,6 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("user", Context.MODE_PRIVATE)
 
 
-
-
         // ------------------ USERNAME SETTINGS -------------------------
 
         val savedUsername = prefs.getString("username", null)
@@ -38,15 +38,14 @@ class MainActivity : AppCompatActivity() {
             binding.menuPlayerName.text = username
         }
 
-
-        binding.menuPlayerName.setOnClickListener { openUsernameDialog() }
-
         if (savedUsername != null) {
             usernameViewModel.changeUsername(savedUsername)
         } else {
             val currentUserName = usernameViewModel.currentUser.value
             prefs.edit().putString("username", currentUserName).commit()
         }
+
+        binding.menuPlayerName.setOnClickListener { openUsernameDialog() }
 
         // --------------------------------------------------------------
 
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         binding.menuCreateGameButton.setOnClickListener { goToCreateGame() }
 
         // Join game button
-        // TODO("Not yet implemented")
+        binding.menuJoinGameButton.setOnClickListener { goToJoinGame() }
 
         // History button
         // TODO("Not yet implemented")
@@ -72,6 +71,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun goToCreateGame() {
         val intent = Intent(this, CreateGameActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToJoinGame() {
+        val intent = Intent(this, JoinGameActivity::class.java)
         startActivity(intent)
     }
 

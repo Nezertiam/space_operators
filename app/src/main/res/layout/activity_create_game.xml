@@ -111,7 +111,7 @@
                     android:id="@+id/createGamePort"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="8888"
+                    android:text="0"
                     android:textColor="@color/white" />
 
             </LinearLayout>
@@ -159,12 +159,6 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
                             android:text="Pas prêt"
-                            />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/material_dynamic_neutral70"
-                            android:text="(Hôte)"
                             />
                     </LinearLayout>
 
@@ -353,7 +347,7 @@
                         android:id="@+id/createGameCurrentUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
+                        android:text="Inconnu"
                         android:textColor="@color/white"
                         />
                 </LinearLayout>

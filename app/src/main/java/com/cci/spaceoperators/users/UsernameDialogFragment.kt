@@ -43,7 +43,7 @@ class UsernameDialogFragment : DialogFragment() {
         )
 
         if (hasSucceed) {
-            val prefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+            val prefs = requireActivity().getSharedPreferences("user", Context.MODE_PRIVATE)
 
             prefs.edit()
                 .putString("username", binding.usernameInput.text.toString())

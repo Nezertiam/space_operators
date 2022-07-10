@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpaceOperators">
         <activity
+            android:name=".JoinGameActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreateGameActivity"
             android:exported="false" />
         <activity

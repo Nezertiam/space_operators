@@ -44,7 +44,25 @@ class CreateGameActivity : AppCompatActivity() {
 
         socketViewModel.ipAddress.observe(this) { address ->
             binding.createGameAddress.text = address
+            if (address != null) {
+                Toast.makeText(applicationContext, "Connexion établie sur l'adresse : $address", Toast.LENGTH_LONG).show()
+            }
         }
 
+        socketViewModel.port.observe(this) { port ->
+            binding.createGamePort.text = port.toString()
+        }
+
+        socketViewModel.running.observe(this) { running ->
+            if (running == false) {
+                Toast.makeText(applicationContext, "Fermeture de la connexion.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
+
+    override fun onDestroy() {
+        socketViewModel.closeSocket()
+        super.onDestroy()
+    }
+
 }
