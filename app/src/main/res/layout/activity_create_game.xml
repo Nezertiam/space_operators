@@ -120,18 +120,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="44dp"
                 >
-
                 <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView"
+                    android:id="@+id/newGamePlayerList"
                     android:name="com.cci.spaceoperators.users.PlayerListFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     />
-
-
-
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -175,5 +170,6 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

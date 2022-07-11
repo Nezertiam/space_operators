@@ -32,8 +32,8 @@ class PlayerListFragment : Fragment() {
             Player("Lunirya")
         ))
 
-        binding.rvPlayerList.adapter = playerAdapter
-        binding.rvPlayerList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+//        binding.rvPlayerList.adapter = playerAdapter
+//        binding.rvPlayerList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     }
 
 }
