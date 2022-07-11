@@ -27,13 +27,10 @@ class PlayerListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        playerAdapter = PlayerAdapter(mutableListOf(
-            Player("Nezertiam"),
-            Player("Lunirya")
-        ))
+        playerAdapter = PlayerAdapter(mutableListOf())
 
-//        binding.rvPlayerList.adapter = playerAdapter
-//        binding.rvPlayerList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvPlayerList.adapter = playerAdapter
+        binding.rvPlayerList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
 }
