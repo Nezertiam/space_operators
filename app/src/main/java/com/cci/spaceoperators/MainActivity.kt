@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.cci.spaceoperators.databinding.ActivityMainBinding
 import com.cci.spaceoperators.sockets.SocketViewModel
 import com.cci.spaceoperators.users.UsernameDialogFragment
 import com.cci.spaceoperators.users.UsernameViewModel
+import java.net.Socket
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -70,12 +70,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goToCreateGame() {
-        val intent = Intent(this, CreateGameActivity::class.java)
+        val intent = Intent(this, LobbyActivity::class.java)
+            .putExtra("isHost", true)
         startActivity(intent)
     }
 
     private fun goToJoinGame() {
-        val intent = Intent(this, JoinGameActivity::class.java)
+        val intent = Intent(this, LobbyActivity::class.java)
+            .putExtra("isHost", false)
+            .putExtra("ip", "192.168.1.35")
+            .putExtra("port", "8888")
         startActivity(intent)
     }
 
@@ -86,5 +90,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun openUsernameDialog() {
         UsernameDialogFragment().show(supportFragmentManager, "username-dialog")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

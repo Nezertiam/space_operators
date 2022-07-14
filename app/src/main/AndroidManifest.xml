@@ -12,10 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpaceOperators">
         <activity
+            android:name=".TestActivity"
+            android:exported="false" />
+        <activity
             android:name=".JoinGameActivity"
             android:exported="false" />
         <activity
-            android:name=".CreateGameActivity"
+            android:name=".LobbyActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

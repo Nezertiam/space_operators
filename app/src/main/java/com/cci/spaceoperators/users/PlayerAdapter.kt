@@ -2,18 +2,26 @@ package com.cci.spaceoperators.users
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.cci.spaceoperators.databinding.FragmentPlayerBinding
+import com.cci.spaceoperators.sockets.SocketViewModel
+import com.cci.spaceoperators.users.dataClasses.Player
 
 class PlayerAdapter(
-    private val players: MutableList<Player>
+    private var players: MutableList<Player>
 ) : RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
 
-    class PlayerViewHolder(
+    inner class PlayerViewHolder(
         binding: FragmentPlayerBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         val playerName = binding.PlayerName
         val playerState = binding.PlayerState
+    }
+
+    fun updatePlayerList(list: MutableList<Player>) {
+        players = list
+        this!!.notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder =
@@ -26,6 +34,7 @@ class PlayerAdapter(
         )
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
+
         val player = players[position]
 
         holder.playerName.text = player.name
