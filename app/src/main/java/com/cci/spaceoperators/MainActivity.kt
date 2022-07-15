@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.cci.spaceoperators.databinding.ActivityMainBinding
+import com.cci.spaceoperators.lobby.JoinGameDialogFragment
 import com.cci.spaceoperators.sockets.SocketViewModel
 import com.cci.spaceoperators.users.UsernameDialogFragment
 import com.cci.spaceoperators.users.UsernameViewModel
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         binding.menuCreateGameButton.setOnClickListener { goToCreateGame() }
 
         // Join game button
-        binding.menuJoinGameButton.setOnClickListener { goToJoinGame() }
+        binding.menuJoinGameButton.setOnClickListener { openJoinGameDialog() }
 
         // History button
         // TODO("Not yet implemented")
@@ -90,6 +91,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun openUsernameDialog() {
         UsernameDialogFragment().show(supportFragmentManager, "username-dialog")
+    }
+
+    private fun openJoinGameDialog() {
+        JoinGameDialogFragment().show(supportFragmentManager, "join-game-dialog")
     }
 
     override fun onDestroy() {
