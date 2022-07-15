@@ -60,16 +60,12 @@ class LobbyActivity : AppCompatActivity() {
     }
 
     private fun updateLayoutInfo(isHost: Boolean, username: String) {
-        binding.tvTitle.text = if (isHost) "Héberger une partie" else "Rejoindre une partie"
         binding.tvUsername.text = username
-        binding.tvPort.text = socketViewModel.port.toString()
-        binding.button.setOnClickListener {
-            val intent = Intent(this, TestActivity::class.java)
-            startActivity(intent)
-        }
         if (isHost) {
+            binding.tvTitle.text = "Héberger une partie"
             binding.tvLobbyStatus.text = "En attente de joueurs"
         } else {
+            binding.tvTitle.text = "Rejoindre une partie"
             socketViewModel.isReady.observe(this) { bool ->
                 binding.button.text = if (bool) "Prêt" else "Pas prêt"
                 binding.tvLobbyStatus.text = binding.button.text

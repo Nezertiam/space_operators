@@ -31,24 +31,16 @@ class JoinGameDialogFragment : DialogFragment() {
     private fun joinGame() {
 
         val address = binding.etAddress.text.toString()
-        val port = binding.etPort.text.toString()
-        val maxPortNumber = 65535
 
         val matchAddress = address.matches("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$".toRegex()) && address != "255.255.255.255"
-        val matchPort = port.matches("-?\\d+(\\.\\d+)?".toRegex()) && port.length <= 5 && port.toInt() >= 0 && port.toInt() <= maxPortNumber
 
-        if (matchAddress && matchPort) {
+        if (matchAddress) {
             val intent = Intent(activity, LobbyActivity::class.java)
                 .putExtra("isHost", false)
                 .putExtra("ip", address)
-                .putExtra("port", port.toInt())
             startActivity(intent)
         } else {
-            if (!matchAddress) {
-                Toast.makeText(activity?.applicationContext, "Adresse IP non valide", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(activity?.applicationContext, "Port non valide", Toast.LENGTH_SHORT).show()
-            }
+            Toast.makeText(activity?.applicationContext, "Adresse IP non valide", Toast.LENGTH_SHORT).show()
         }
 
     }

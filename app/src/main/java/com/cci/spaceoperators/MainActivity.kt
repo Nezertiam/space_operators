@@ -76,14 +76,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun goToJoinGame() {
-        val intent = Intent(this, LobbyActivity::class.java)
-            .putExtra("isHost", false)
-            .putExtra("ip", "192.168.1.35")
-            .putExtra("port", "8888")
-        startActivity(intent)
-    }
-
     private fun closeApp() {
         moveTaskToBack(true)
         exitProcess(-1)
@@ -95,9 +87,5 @@ class MainActivity : AppCompatActivity() {
 
     private fun openJoinGameDialog() {
         JoinGameDialogFragment().show(supportFragmentManager, "join-game-dialog")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }
