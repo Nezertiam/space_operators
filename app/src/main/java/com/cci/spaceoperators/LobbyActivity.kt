@@ -78,9 +78,7 @@ class LobbyActivity : AppCompatActivity() {
 
     private fun tryConnectToExistingGame(savedInstanceState: Bundle?) {
         val username = getUsername()
-        val address = intent.getStringExtra("ip") ?: "127.0.0.1"
-
-        Log.d("PACKET", address)
+        val address = intent.getStringExtra("ip")
 
         if (address != null) {
             socketViewModel.ipAddress.postValue(address)
@@ -117,6 +115,7 @@ class LobbyActivity : AppCompatActivity() {
 
         } else {
             Toast.makeText(applicationContext, "Impossible d'émettre une connexion à l'hôte...", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 
