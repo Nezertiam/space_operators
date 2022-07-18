@@ -1,19 +1,21 @@
 package com.cci.spaceoperators
 
 import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.cci.spaceoperators.databinding.ActivityLobbyBinding
+import com.cci.spaceoperators.lobby.ConnectionStatus
+import com.cci.spaceoperators.lobby.GameLobbyFragment
+import com.cci.spaceoperators.lobby.LoadingFragment
 import com.cci.spaceoperators.sockets.Request
 import com.cci.spaceoperators.sockets.RequestTypes
 import com.cci.spaceoperators.sockets.SocketViewModel
 import com.cci.spaceoperators.sockets.payloads.ConnectPayload
-import com.cci.spaceoperators.sockets.payloads.StatusPayload
-import com.cci.spaceoperators.users.dataClasses.Player
+import kotlinx.coroutines.*
 
 class LobbyActivity : AppCompatActivity() {
 
@@ -28,105 +30,94 @@ class LobbyActivity : AppCompatActivity() {
         binding = ActivityLobbyBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val isHost = checkIsHost()
+        if (isHost) {
+            socketViewModel.connectionStatus.postValue(ConnectionStatus.CONNECTED)
+            displayLobby(savedInstanceState)
+        }
+        else {
+            displayLoading(savedInstanceState)
+            tryConnectToExistingGame(savedInstanceState)
+        }
+
+    }
+
+    /**
+     * Checks if the user is the game host and returns the result.
+     */
+    private fun checkIsHost() : Boolean {
+        return intent!!.getBooleanExtra("isHost", false)
+    }
+
+    /**
+     * Get the username saved in the Shared Preferences.
+     */
+    private fun getUsername() : String {
         val prefs = getSharedPreferences("user", Context.MODE_PRIVATE)
-        val username = prefs.getString("username", null) ?: "Inconnu"
-        val isHost = intent.getBooleanExtra("isHost", false)
-
-
-        // ------------ DISPLAYING INITIAL INFO ---------------
-
-        updateLayoutInfo(isHost, username)
-
-
-        // ----------------------------------------------------
-
-
-        // ------------ UPDATING INFOS ------------------------
-
-        // IP ADDRESS
-        if (isHost) hostGame(username) else connectToGame(username)
-
-        // BUTTON LISTENER
-        if (isHost) {
-            //
-        } else {
-            binding.button.setOnClickListener { updateStatus(username) }
-        }
-
-        // ----------------------------------------------------
-
-
-
+        return prefs!!.getString("username", null) ?: "Inconnu"
     }
 
-    private fun updateLayoutInfo(isHost: Boolean, username: String) {
-        binding.tvUsername.text = username
-        if (isHost) {
-            binding.tvTitle.text = "Héberger une partie"
-            binding.tvLobbyStatus.text = "En attente de joueurs"
-        } else {
-            binding.tvTitle.text = "Rejoindre une partie"
-            socketViewModel.isReady.observe(this) { bool ->
-                binding.button.text = if (bool) "Prêt" else "Pas prêt"
-                binding.tvLobbyStatus.text = binding.button.text
-            }
+    private fun displayLoading(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fgmGameLayout, LoadingFragment())
+                .commit()
         }
     }
 
-    private fun hostGame(username: String) {
-        socketViewModel.ipAddress.observe(this) { address ->
-            binding.tvAddress.text = address
-            if (address != null) {
-                Toast.makeText(applicationContext, "Connexion établie sur l'adresse : $address", Toast.LENGTH_SHORT).show()
-                socketViewModel.playerList.postValue(
-                    mutableListOf(
-                        Player( username, address, socketViewModel.port.toString(),true )
-                    )
-                )
-            }
+    private fun displayLobby(savedInstanceState: Bundle?) {
+        socketViewModel.connectionStatus.postValue(ConnectionStatus.CONNECTED)
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fgmGameLayout, GameLobbyFragment())
+                .commit()
         }
     }
 
-    private fun connectToGame(username: String) {
-        val address = intent.getStringExtra("ip")
+    private fun tryConnectToExistingGame(savedInstanceState: Bundle?) {
+        val username = getUsername()
+        val address = intent.getStringExtra("ip") ?: "127.0.0.1"
+
+        Log.d("PACKET", address)
 
         if (address != null) {
+            socketViewModel.ipAddress.postValue(address)
+
+            val timer = object: CountDownTimer(5000, 1000) {
+                override fun onTick(p0: Long) {}
+
+                override fun onFinish() {
+                    Toast.makeText(applicationContext, "Le serveur ne répond pas...", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            }
+            timer.start()
+
+            socketViewModel.playerList.observe(this@LobbyActivity) {
+                if (it.size > 0) {
+                    timer.cancel()
+                    displayLobby(savedInstanceState)
+                }
+            }
+
             val request = Request(
                 RequestTypes.connect,
                 ConnectPayload(username)
             )
-
-            binding.tvAddress.text = address
 
             socketViewModel.sendUDPData(
                 address,
                 socketViewModel.port,
                 request.toJson(),
             )
-            Toast.makeText(applicationContext, "Connexion établie sur l'adresse : $address", Toast.LENGTH_SHORT).show()
+
+
+
         } else {
             Toast.makeText(applicationContext, "Impossible d'émettre une connexion à l'hôte...", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun updateStatus(username: String) {
-        val address = intent.getStringExtra("ip")
-
-        if (address != null) {
-            val request = Request(
-                RequestTypes.status,
-                StatusPayload(
-                    username,
-                    address,
-                    socketViewModel.port,
-                    !socketViewModel.isReady.value!!
-                )
-            )
-            socketViewModel.sendUDPData(address, socketViewModel.port, request.toJson())
-            socketViewModel.isReady.postValue(!socketViewModel.isReady.value!!)
-
-        }
-
     }
 
 
