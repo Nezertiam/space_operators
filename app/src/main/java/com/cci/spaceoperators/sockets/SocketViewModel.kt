@@ -43,7 +43,6 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
         }
 
         listenSocket()
-        Log.d("PACKET", "SOCKET LISTENING ON PORT $port")
     }
 
     private fun listenSocket() {
@@ -91,6 +90,8 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
                 val packet = DatagramPacket(dataBytes, dataBytes.size, inetAddress, port)
                 it.send(packet)
             }
+            val type = JSONObject(data).getString("type")
+            Log.d("PACKET", "Sending packet with type $type")
         }
     }
 
@@ -108,7 +109,7 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
      */
     private fun sendUpdatedPlayerList() {
         val request = Request(
-            RequestTypes.players,
+            RequestTypes.PLAYERS,
             PlayersPayload(playerList.value!!)
         )
         playerList.value!!.map { it ->
@@ -133,12 +134,17 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
 
     private fun handlePacketRetrieve(packet: DatagramPacket) {
 
+        Log.d("PACKET", "UDP packet received")
+
         val data = JSONObject(packet.data.decodeToString())
 
+        Log.d("PACKET", "Type of ${data.getString("type")}")
+
         when(data.getString("type")) {
-            RequestTypes.connect.toString() -> connectPlayer(packet)
-            RequestTypes.players.toString() -> updatePlayers(packet)
-            RequestTypes.status.toString() -> updateStatus(packet)
+            RequestTypes.CONNECT.toString() -> connectPlayer(packet)
+            RequestTypes.PLAYERS.toString() -> updatePlayers(packet)
+            RequestTypes.STATUS.toString() -> updateStatus(packet)
+            RequestTypes.DISCONNECT.toString() -> disconnectPlayer(packet)
             else -> {}
         }
 
@@ -193,6 +199,22 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
         playerList.postValue(list)
 
         // Resend player list
+        sendUpdatedPlayerList()
+    }
+
+    private fun disconnectPlayer(packet: DatagramPacket) {
+        // Get the player identifier
+        val ip = getPacketIp(packet)
+
+        // Update the list by removing the player
+        val list = playerList.value!!
+        val index = list.indexOf(
+            list.find { player -> player.ip == ip }
+        )
+        list.removeAt(index)
+        playerList.postValue(list)
+
+        // Resend the updated list
         sendUpdatedPlayerList()
     }
 

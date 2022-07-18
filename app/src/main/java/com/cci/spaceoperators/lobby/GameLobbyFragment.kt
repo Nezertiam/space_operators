@@ -112,11 +112,9 @@ class GameLobbyFragment : Fragment() {
 
         if (address != null) {
             val request = Request(
-                RequestTypes.status,
+                RequestTypes.STATUS,
                 StatusPayload(
                     username,
-                    address,
-                    socketViewModel.port,
                     !socketViewModel.isReady.value!!
                 )
             )

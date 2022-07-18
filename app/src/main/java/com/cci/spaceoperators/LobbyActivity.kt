@@ -15,7 +15,7 @@ import com.cci.spaceoperators.sockets.Request
 import com.cci.spaceoperators.sockets.RequestTypes
 import com.cci.spaceoperators.sockets.SocketViewModel
 import com.cci.spaceoperators.sockets.payloads.ConnectPayload
-import kotlinx.coroutines.*
+import com.cci.spaceoperators.sockets.payloads.StatusPayload
 
 class LobbyActivity : AppCompatActivity() {
 
@@ -57,6 +57,13 @@ class LobbyActivity : AppCompatActivity() {
         return prefs!!.getString("username", null) ?: "Inconnu"
     }
 
+    /**
+     * Return the address sent by the Main Activity.
+     */
+    private fun getAddress() : String? {
+        return intent.getStringExtra("ip")
+    }
+
     private fun displayLoading(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             supportFragmentManager
@@ -78,7 +85,7 @@ class LobbyActivity : AppCompatActivity() {
 
     private fun tryConnectToExistingGame(savedInstanceState: Bundle?) {
         val username = getUsername()
-        val address = intent.getStringExtra("ip")
+        val address = getAddress()
 
         if (address != null) {
             socketViewModel.ipAddress.postValue(address)
@@ -101,7 +108,7 @@ class LobbyActivity : AppCompatActivity() {
             }
 
             val request = Request(
-                RequestTypes.connect,
+                RequestTypes.CONNECT,
                 ConnectPayload(username)
             )
 
@@ -119,10 +126,26 @@ class LobbyActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
 
-    override fun onDestroy() {
+        val isHost = checkIsHost()
+        val address = getAddress()
+        val name = getUsername()
+
+        if (!isHost && address != null) {
+            val request = Request(
+                RequestTypes.DISCONNECT
+            )
+            socketViewModel.sendUDPData(
+                address,
+                socketViewModel.port,
+                request.toJson()
+            )
+        }
+
         socketViewModel.closeSocket()
-        super.onDestroy()
-    }
 
+        finish()
+    }
 }
