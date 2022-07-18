@@ -103,7 +103,6 @@ class LobbyActivity : AppCompatActivity() {
                 socketViewModel.port,
                 request.toJson(),
             )
-            Log.d("PACKET", request.toJson())
             Toast.makeText(applicationContext, "Connexion établie sur l'adresse : $address", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(applicationContext, "Impossible d'émettre une connexion à l'hôte...", Toast.LENGTH_SHORT).show()

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.cci.spaceoperators.lobby.ConnectionStatus
 import com.cci.spaceoperators.sockets.payloads.PlayersPayload
 import com.cci.spaceoperators.users.dataClasses.Player
 import com.cci.spaceoperators.users.dataClasses.PlayerList
@@ -19,8 +20,11 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
 
     val port = 8888
     val ipAddress = MutableLiveData<String>(null)
+
+    // Player list and status
     val playerList = MutableLiveData<MutableList<Player>>(mutableListOf())
-    val isReady = MutableLiveData<Boolean>(false)
+    val isReady = MutableLiveData(false)
+    val connectionStatus = MutableLiveData(ConnectionStatus.LOADING)
 
 
     private val gson = GsonBuilder().create()
@@ -50,7 +54,7 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
             try {
                 serverSocket.receive(packet)
 
-                handlePacketRetrieve(packet)
+                handlePacketRetrieve(packet) // Packet routing
 
                 listenSocket()
             } catch (ex: Exception) {
@@ -65,16 +69,48 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
 
 // ------------------------ UTILS -----------------------------------------------------
 
+    /**
+     * Close the socket.
+     */
+    fun closeSocket() {
+        serverSocket.close()
+    }
+
+    /**
+     * Send a UDP packet to the given IP address and attaching the given payload.
+     *
+     * @param address The IP address to send the packet.
+     * @param port The PORT to send the packet.
+     * @param data The payload in JSON type casted into a string.
+     */
+    fun sendUDPData(address: String, port: Int, data: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            DatagramSocket().use {
+                val dataBytes = data.toByteArray()
+                val inetAddress = InetAddress.getByName(address)
+                val packet = DatagramPacket(dataBytes, dataBytes.size, inetAddress, port)
+                it.send(packet)
+            }
+        }
+    }
+
+    /**
+     * Extracts and formats the ip address of the sender from the packet received.
+     *
+     * @param packet The DatagramPacket received from the request.
+     */
     private fun getPacketIp(packet: DatagramPacket): String {
         return packet.address.toString().replace("/", "")
     }
 
+    /**
+     * Send a packet with the player list in the payload to all players except the sender.
+     */
     private fun sendUpdatedPlayerList() {
         val request = Request(
             RequestTypes.players,
             PlayersPayload(playerList.value!!)
         )
-
         playerList.value!!.map { it ->
             if (it.ip != ipAddress.value) {
                 sendUDPData(
@@ -160,25 +196,6 @@ class SocketViewModel(application: Application): AndroidViewModel(application)  
         sendUpdatedPlayerList()
     }
 
-
 // ------------------------------------------------------------------------------------
-
-
-
-    fun closeSocket() {
-        serverSocket.close()
-    }
-
-    fun sendUDPData(address: String, port: Int, data: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            DatagramSocket().use {
-                val dataBytes = data.toByteArray()
-                val inetAddress = InetAddress.getByName(address)
-                val packet = DatagramPacket(dataBytes, dataBytes.size, inetAddress, port)
-                it.send(packet)
-            }
-        }
-    }
-
 
 }
